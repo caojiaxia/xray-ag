@@ -30,8 +30,8 @@ services:
     container_name: xray-tunnel
     restart: always
     environment:
-      UUID: 你的UUID
-      XPATH: /你的路径
+      UUID: xxxxxx     #你的UUID
+      XPATH: /xxxxxx   #你的路径
       TUNNEL_TOKEN: 你的隧道Token
 ```
 
