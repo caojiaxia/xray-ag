@@ -50,6 +50,10 @@ docker compose up -d
  docker logs -f xray-tunnel
 ```
 
+###一键安装命令：
+```
+curl -fsSL https://raw.githubusercontent.com/caojiaxia/xray-tunnel/main/deploy.sh | bash
+```
 
 ### cloudflare tunnel创建
 | 选项        | 说明                                                                      |
