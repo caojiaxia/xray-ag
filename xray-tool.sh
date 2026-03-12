@@ -6,6 +6,22 @@ TUNNEL_IMAGE="ghcr.io/$GH_USER/xray-tunnel:latest"
 INFO_FILE="/etc/xray_tunnel_info.txt"
 # ==========================================
 
+# 环境检测：检查 Docker 是否安装
+check_docker() {
+    if ! command -v docker &> /dev/null; then
+        echo -e "\033[0;31m检测到未安装 Docker，正在自动安装...\033[0m"
+        curl -fsSL https://get.docker.com | bash
+        if [ $? -ne 0 ]; then
+            echo -e "\033[0;31mDocker 安装失败，请手动安装后重试。\033[0m"
+            exit 1
+        fi
+        echo -e "\033[0;32mDocker 安装完成。\033[0m"
+    fi
+}
+
+# 运行检查
+check_docker
+
 # 开启 BBR 函数
 enable_bbr() {
     echo -e "\033[0;34m正在检测 BBR...\033[0m"
