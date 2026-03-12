@@ -36,9 +36,9 @@ services:
     container_name: xray-tunnel
     restart: always
     environment:
-      UUID: xxxxxx     #你的UUID
-      XPATH: /xxxxxx   #你的路径
-      TUNNEL_TOKEN: 你的隧道Token
+      UUID: xxxxxx             #你的UUID
+      XPATH: /xxxxxx           #你的路径
+      TUNNEL_TOKEN: xxxxxxx    #你的隧道Token
 ```
 
 ### 启动命令
