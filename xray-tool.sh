@@ -21,12 +21,20 @@ enable_bbr() {
 
 # 安装 Tunnel 函数
 install_tunnel() {
-    # 使用 < /dev/tty 强制从终端读取输入
+    # 随机生成器
+    local RAND_UUID=$(cat /proc/sys/kernel/random/uuid)
+    local RAND_PATH="/"$(head /dev/urandom | tr -dc 'a-z0-9' | head -c 8)
+
     read -p "请输入 Tunnel Token: " TOKEN < /dev/tty
-    read -p "请输入 UUID (回车默认): " MY_UUID < /dev/tty
-    MY_UUID=${MY_UUID:-"c67e108d-b135-4acd-b0b4-33f2d18dff44"}
-    read -p "请输入 WS 路径 (回车默认 /ws): " MY_XPATH < /dev/tty
-    MY_XPATH=${MY_XPATH:-"/ws"}
+    
+    echo -e "\033[0;33m系统为您随机生成的 UUID: $RAND_UUID\033[0m"
+    read -p "请输入 UUID (回车默认使用随机值): " MY_UUID < /dev/tty
+    MY_UUID=${MY_UUID:-$RAND_UUID}
+    
+    echo -e "\033[0;33m系统为您随机生成的路径: $RAND_PATH\033[0m"
+    read -p "请输入 WS 路径 (回车默认使用随机值): " MY_XPATH < /dev/tty
+    MY_XPATH=${MY_XPATH:-$RAND_PATH}
+    
     read -p "请输入 CF 绑定域名: " MY_DOMAIN < /dev/tty
 
     docker rm -f xray-tunnel 2>/dev/null
