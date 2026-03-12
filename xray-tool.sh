@@ -91,9 +91,9 @@ check_env
 while true; do
     clear
     echo -e "${BLUE}====================================${NC}"
-    echo -e "${GREEN}      BoGe Cloudflare Tunnel      ${NC}"
+    echo -e "${GREEN}      BoGe VPS Xray Docker工具箱      ${NC}"
     echo -e "${BLUE}====================================${NC}"
-    echo "1) 安装 Cloudflare Tunnel"
+    echo "1) 安装 Cloudflare Tunnel 方案 (WS)"
     echo "2) 开启 BBR 加速"
     echo "3) 查看已生成的节点链接"
     echo "4) 彻底卸载并清理残留"
