@@ -48,17 +48,22 @@ enable_bbr() {
 
 # 安装 Tunnel 函数
 install_tunnel() {
+    # 随机生成器
     local RAND_UUID=$(cat /proc/sys/kernel/random/uuid)
     local RAND_PATH="/"$(head /dev/urandom | tr -dc 'a-z0-9' | head -c 8)
 
     read -p "请输入 Tunnel Token: " TOKEN < /dev/tty
+    
+    echo -e "${YELLOW}系统随机 UUID: $RAND_UUID${NC}"
     read -p "请输入 UUID (回车默认): " MY_UUID < /dev/tty
     MY_UUID=${MY_UUID:-$RAND_UUID}
+    
+    echo -e "${YELLOW}系统随机路径: $RAND_PATH${NC}"
     read -p "请输入 WS 路径 (回车默认): " MY_XPATH < /dev/tty
     MY_XPATH=${MY_XPATH:-$RAND_PATH}
+    
     read -p "请输入 CF 绑定域名: " MY_DOMAIN < /dev/tty
     
-    # 新增伪装参数
     echo -e "${CYAN}--- 高级伪装配置 ---${NC}"
     read -p "请输入伪装域名 (Host/SNI, 回车默认使用 $MY_DOMAIN): " MY_HOST < /dev/tty
     MY_HOST=${MY_HOST:-$MY_DOMAIN}
@@ -73,32 +78,28 @@ install_tunnel() {
     docker run -d --name xray-tunnel --restart always \
         -e TUNNEL_TOKEN="$TOKEN" -e UUID="$MY_UUID" -e XPATH="$MY_XPATH" $TUNNEL_IMAGE
     
-    # 生成链接：整合了 Host 和 SNI 参数
+    # 整合所有参数
     local FULL_LINK="vless://$MY_UUID@$MY_DOMAIN:443?path=$MY_XPATH&security=tls&encryption=none&type=ws&host=$MY_HOST&sni=$MY_HOST&fp=chrome&alpn=h2,http/1.1#CF_WS_${MY_TYPE}_$MY_DOMAIN"
     echo "$FULL_LINK" > "$INFO_FILE"
     
-    echo -e "\n${GREEN}部署成功！${NC}"
-    echo -e "${CYAN}节点链接 (已加入伪装参数)：${NC}\n$FULL_LINK"
-}
-
-# 菜单列表
-show_menu() {
-    clear
-    echo -e "${BLUE}====================================${NC}"
-    echo -e "${GREEN}      BoGe Cloudflare Tunnel      ${NC}"
-    echo -e "${BLUE}====================================${NC}"
-    echo "1) 安装 Cloudflare Tunnel"
-    echo "2) 开启 BBR 加速"
-    echo "3) 查看已生成的节点链接"
-    echo "4) 彻底卸载并清理残留"
-    echo "5) 退出"
-    echo -e "${BLUE}====================================${NC}"
+    echo -e "\n${GREEN}部署成功！配置已保存。${NC}"
+    echo -e "${CYAN}节点链接 (包含指纹/ALPN/伪装参数)：${NC}\n$FULL_LINK"
 }
 
 # 主程序循环
 check_env
 while true; do
-    show_menu
+    clear
+    echo -e "${BLUE}====================================${NC}"
+    echo -e "${GREEN}      BoGe VPS Xray Docker工具箱      ${NC}"
+    echo -e "${BLUE}====================================${NC}"
+    echo "1) 安装 Cloudflare Tunnel 方案 (WS)"
+    echo "2) 开启 BBR 加速"
+    echo "3) 查看已生成的节点链接"
+    echo "4) 彻底卸载并清理残留"
+    echo "5) 退出"
+    echo -e "${BLUE}====================================${NC}"
+    
     read -p "请选择操作 [1-5]: " choice < /dev/tty
     choice=$(echo "$choice" | tr -d '\r\n\t ')
 
