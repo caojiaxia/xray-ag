@@ -52,17 +52,20 @@ install_tunnel() {
     local RAND_PATH="/"$(head /dev/urandom | tr -dc 'a-z0-9' | head -c 8)
 
     read -p "请输入 Tunnel Token: " TOKEN < /dev/tty
-    echo -e "${YELLOW}系统随机 UUID: $RAND_UUID${NC}"
     read -p "请输入 UUID (回车默认): " MY_UUID < /dev/tty
     MY_UUID=${MY_UUID:-$RAND_UUID}
-    
-    echo -e "${YELLOW}系统随机路径: $RAND_PATH${NC}"
     read -p "请输入 WS 路径 (回车默认): " MY_XPATH < /dev/tty
     MY_XPATH=${MY_XPATH:-$RAND_PATH}
-    
     read -p "请输入 CF 绑定域名: " MY_DOMAIN < /dev/tty
+    
+    # 新增伪装参数
+    echo -e "${CYAN}--- 高级伪装配置 ---${NC}"
+    read -p "请输入伪装域名 (Host/SNI, 回车默认使用 $MY_DOMAIN): " MY_HOST < /dev/tty
+    MY_HOST=${MY_HOST:-$MY_DOMAIN}
+    read -p "请输入伪装类型 (例如: web, cdn, 或自定义): " MY_TYPE < /dev/tty
+    MY_TYPE=${MY_TYPE:-"cdn"}
 
-    echo -e "${BLUE}正在拉取镜像 (请稍候)... ${NC}"
+    echo -e "${BLUE}正在拉取镜像... ${NC}"
     docker pull $TUNNEL_IMAGE > /dev/null &
     progress_bar 15
     
@@ -70,11 +73,12 @@ install_tunnel() {
     docker run -d --name xray-tunnel --restart always \
         -e TUNNEL_TOKEN="$TOKEN" -e UUID="$MY_UUID" -e XPATH="$MY_XPATH" $TUNNEL_IMAGE
     
-    local FULL_LINK="vless://$MY_UUID@$MY_DOMAIN:443?path=$MY_XPATH&security=tls&encryption=none&type=ws&sni=$MY_DOMAIN&fp=chrome&alpn=h2,http/1.1#CF_WS_$MY_DOMAIN"
+    # 生成链接：整合了 Host 和 SNI 参数
+    local FULL_LINK="vless://$MY_UUID@$MY_DOMAIN:443?path=$MY_XPATH&security=tls&encryption=none&type=ws&host=$MY_HOST&sni=$MY_HOST&fp=chrome&alpn=h2,http/1.1#CF_WS_${MY_TYPE}_$MY_DOMAIN"
     echo "$FULL_LINK" > "$INFO_FILE"
     
-    echo -e "\n${GREEN}部署成功！配置已保存。${NC}"
-    echo -e "${CYAN}节点链接 (包含指纹与ALPN)：${NC}\n$FULL_LINK"
+    echo -e "\n${GREEN}部署成功！${NC}"
+    echo -e "${CYAN}节点链接 (已加入伪装参数)：${NC}\n$FULL_LINK"
 }
 
 # 菜单列表
