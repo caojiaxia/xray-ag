@@ -1,4 +1,10 @@
-## 使用教程
+### 一键安装命令
+```
+curl -Ls https://raw.githubusercontent.com/caojiaxia/xray-tunnel/main/xray-tool.sh | bash
+```
+
+
+### 使用教程
 **Docker环境部署**
 - 1.更新系统软件包
 ```
