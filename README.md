@@ -1,6 +1,6 @@
 ### 一键安装命令
 ```
-curl -Ls https://raw.githubusercontent.com/caojiaxia/xray-tunnel/main/xray-tool.sh | bash
+bash <(curl -Ls https://raw.githubusercontent.com/caojiaxia/xray-tunnel/main/xray-tool.sh)
 ```
 
 
